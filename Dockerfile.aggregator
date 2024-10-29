@@ -1,0 +1,14 @@
+# Use a Python base image
+FROM python:3.9-slim
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the data aggregator script
+COPY data_aggregator.py /app/
+
+# Install required Python packages
+RUN pip install kafka-python pandas
+
+# Run the data aggregator script
+CMD ["python", "data_aggregator.py"]
