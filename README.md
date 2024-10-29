@@ -9,5 +9,5 @@ Another containerized microservice aggregates the data, additionally the data is
 Based on MongoDB, the position of players can be visualized.
 
 Simplified high-level data flow:
-![Alt text](/data_flow.jpg.png)
+![Alt text](/data_flow.jpg)
 
