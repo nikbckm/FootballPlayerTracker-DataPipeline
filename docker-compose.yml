@@ -25,7 +25,16 @@ services:
   data-generator:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile  # Existing Dockerfile for the data generator
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - kafka
+
+  data-transformer:
+    build:
+      context: .
+      dockerfile: Dockerfile.transformer  # New Dockerfile for the data transformer
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     depends_on:
