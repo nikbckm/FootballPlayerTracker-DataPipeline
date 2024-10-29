@@ -8,6 +8,8 @@ Then the data will be transformed to two-column x-y coordinates in a seperate mi
 Another containerized microservice aggregates the data, additionally the data is send to MongoDB.
 Based on MongoDB, the position of players can be visualized.
 
-Simplified high-level data flow:
-![Alt text](/data_flow.jpg)
+##Simplified high-level data flow:
+![Data Flow simplified](/data_flow.jpg)
 
+##Example visualisation of player positioning data:
+![Player Positioning Visual](/player_positions_viz.png)
