@@ -1,4 +1,4 @@
-# Real-time data backend for tracking football player locations based on video footage
+# Real-time data backend for tracking football player locations using Docker, Kafka & MongoDB
 
 Using Docker for containerization, Kafka for data-streaming and MongoDB for storage.
 
