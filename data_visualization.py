@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 from pymongo import MongoClient
+import time
 
-# Function to draw a soccer field
+# Function to draw a soccer field (same as before)
 def draw_soccer_field(ax):
     # Standard soccer field dimensions in meters
     field_length_m = 105
@@ -43,8 +44,8 @@ def draw_soccer_field(ax):
     # Vertical Center Line
     plt.plot([1050 / 2, 1050 / 2], [field_top, field_top + field_width_px], color='black', lw=2)
 
-# Function to fetch the latest player position data from MongoDB
-def fetch_last_player_position():
+# Function to fetch the latest player position data from MongoDB (same as before)
+def fetch_last_player_position(last_id):
     # Connect to MongoDB
     client = MongoClient("mongodb://localhost:27017/")
     db = client["game_data"]  # Your actual database name
@@ -55,41 +56,51 @@ def fetch_last_player_position():
     
     # Check if player_data is None
     if player_data is None:
-        print("No data found in the collection.")
-        return None  # Return None if no data is found
-    
-    return player_data  # Return the player data
+        return None, last_id  # Return None if no data is found
+
+    if player_data['_id'] != last_id:
+        return player_data, player_data['_id']  # Return the player data and the new last_id
+    else:
+        return None, last_id  # No new data
 
 # Main function to execute the fetching, printing, and plotting
 def main():
-    last_position = fetch_last_player_position()
+    last_id = None  # Track the last _id
+    plt.ion()  # Enable interactive mode
+    fig, ax = plt.subplots(figsize=(1050 / 100, 680 / 100), dpi=100)  # Fixed size in inches
+    draw_soccer_field(ax)
     
-    if last_position is not None:
-        print("Last player position data:", last_position)
-        
-        # Create the plot
-        fig, ax = plt.subplots(figsize=(1050 / 100, 680 / 100), dpi=100)  # Fixed size in inches
-        
-        # Draw the soccer field
-        draw_soccer_field(ax)
+    try:
+        while True:
+            last_position, last_id = fetch_last_player_position(last_id)
+            
+            if last_position is not None:
+                print("Last player position data:", last_position)
+                ax.clear()  # Clear the current axis
+                draw_soccer_field(ax)  # Redraw the soccer field
 
-        # Plot the last player position
-        for player_number, position in last_position.items():
-            if player_number != "_id":  # Exclude the _id field
-                x = position['x']
-                y = position['y']
-                ax.scatter(x * (1050 / 105), y * (680 / 68), color='red', marker='o', s=100)  # Scale position
-                print(f"Player {player_number}: (x: {x}, y: {y})")  # Print individual player positions
+                # Plot the last player position
+                for player_number, position in last_position.items():
+                    if player_number != "_id":  # Exclude the _id field
+                        x = position['x']
+                        y = position['y']
+                        ax.scatter(x * (1050 / 105), y * (680 / 68), color='red', marker='o', s=100)  # Scale position
+                        print(f"Player {player_number}: (x: {x}, y: {y})")  # Print individual player positions
 
-        plt.xlim(0, 1050)
-        plt.ylim(0, 680)
-        plt.gca().invert_yaxis()
-        plt.title('Last Player Positions on Soccer Field', fontsize=24)
-        ax.axis('off')
-        plt.tight_layout()
-        plt.show()
-    else:
-        print("Could not retrieve player positions.")
+                plt.xlim(0, 1050)
+                plt.ylim(0, 680)
+                plt.gca().invert_yaxis()
+                plt.title('Last Player Positions on Soccer Field', fontsize=24)
+                ax.axis('off')
+                plt.tight_layout()
+                plt.draw()  # Update the figure
+                plt.pause(0.1)  # Pause for a brief moment to allow the plot to update
+
+            time.sleep(1)  # Wait before fetching data again
+            
+    except KeyboardInterrupt:
+        print("Exiting gracefully...")  # Print exit message
+        plt.close(fig)  # Close the plot
 
 # Call the main function
 if __name__ == "__main__":
