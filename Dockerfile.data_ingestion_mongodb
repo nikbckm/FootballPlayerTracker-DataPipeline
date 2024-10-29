@@ -1,0 +1,14 @@
+# Use a base image with Python
+FROM python:3.9-slim
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the script into the container
+COPY data_ingestion_mongodb.py .
+
+# Install required Python packages
+RUN pip install kafka-python pymongo
+
+# Command to run the script
+CMD ["python", "data_ingestion_mongodb.py"]
